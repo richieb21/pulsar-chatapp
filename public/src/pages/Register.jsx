@@ -20,6 +20,13 @@ function Register() {
     draggable: true,
     theme: "dark",
   }
+
+  useEffect(() => {
+    if (localStorage.getItem('chat-app-user')){
+      navigate("/");
+    }
+  }, []);
+
   const [values, setValues] = useState({
     username: "",
     email: "",
