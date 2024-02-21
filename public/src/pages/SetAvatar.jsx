@@ -36,9 +36,10 @@ function SetAvatar() {
         const { data } = await axios.post(`${setAvatarRoute}/${user._id}`, {
             image: avatars[selectedAvatar]
         });
+
         if (data.isSet){
             user.isAvatarImage = true;
-            user.avatarImage = data.image;
+            user.avatarImage = avatars[selectedAvatar];
             localStorage.setItem('chat-app-user', JSON.stringify(user));
             navigate("/");
         } else {
@@ -64,6 +65,21 @@ function SetAvatar() {
     })();
   }, []);
 
+  const refreshAvatars = async () => {
+    const data = [];
+    try {
+      for (let i = 0; i < 4; i++) {
+        const svg = multiavatar(Math.round(Math.random() * 10000));
+        data.push(svg);
+      }
+      setAvatars(data);
+    } catch (error) {
+      console.error("Failed to fetch avatars:", error);
+      toast.error("Failed to load avatars. Please try again later.", toastOptions);
+    }
+    setIsLoading(false);
+  }
+
 
   return (
     <>
@@ -81,6 +97,7 @@ function SetAvatar() {
           ))}
         </div>
         <button className='submit-btn' onClick={setProfilePicture}>Set as Profile Picture</button>
+        <button className='submit-btn' onClick={refreshAvatars}>Refresh</button>
         <ToastContainer/>
       </Container>
     </>
