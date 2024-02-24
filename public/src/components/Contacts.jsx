@@ -129,7 +129,7 @@ const Container = styled.div`
         align-items: center;
         gap: 2rem;
         svg {
-            height: 4rem;
+            height: 3.5rem;
             max-inline-size: 100%;
         }
         .username {

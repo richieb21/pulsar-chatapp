@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components';
-import axios, { all } from 'axios';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { allUsersRoute } from '../utils/APIRoutes';
 import Contacts from '../components/Contacts';
@@ -52,7 +52,7 @@ function Chat() {
       <div className='chat-container'>
         <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange}/>
         {
-          isLoaded && currentChat === undefined ? <Welcome currentUser={currentUser} /> : <ChatContainer currentChat={currentChat}/>
+          isLoaded && currentChat && currentUser === undefined ? <Welcome currentUser={currentUser} /> : <ChatContainer currentChat={currentChat} currentUser={currentUser}/>
         }
       </div>
     </Container>
