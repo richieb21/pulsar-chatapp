@@ -2,9 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import * as dotenv from 'dotenv';
+import { Server } from 'socket.io';
 
 import userRoutes from './routes/userRoutes.js';
 import messageRoutes from './routes/messagesRoute.js';
+import { createServer } from 'http';
 
 dotenv.config();
 const app = express();
@@ -22,6 +24,31 @@ mongoose.connect(process.env.MONGO_URL, {}).then(() => {
     console.log(err)
 })
 
-const server = app.listen(process.env.PORT, () => {
-    console.log(`Server started on port ${process.env.PORT}`)
+const httpServer = createServer(app);
+
+const io = new Server(httpServer, {
+    cors: {
+        origin:"http://localhost:3001",
+        credentials: true,
+    }
+});
+
+global.onlineUsers = new Map();
+
+io.on("connection", (socket) => {
+    global.chatSocket = socket;
+    socket.on("add-user", (userId) => {
+        onlineUsers.set(userId, socket.id);
+    })
+
+    socket.on("send-msg", (data) => {
+        const sendUserSocket = onlineUsers.get(data.to);
+        if (sendUserSocket){
+            socket.to(sendUserSocket).emit("msg-receive", data.msg);
+        }
+    })
 })
+
+httpServer.listen(3003, () => {
+    console.log(`Socket started on port 3003`);
+  });
